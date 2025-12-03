@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { WiHumidity, WiStrongWind } from "react-icons/wi";
 
-const API_KEY = "c25d90ef06c1b37bcf89c61e947341d1"; // ← Replace this
+const API_KEY = import.meta.env.VITE_OPENWEATHER_KEY;
 
 export default function CurrentWeather({ city }) {
   const [weather, setWeather] = useState(null);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     axios
@@ -17,30 +16,38 @@ export default function CurrentWeather({ city }) {
           units: "metric",
         },
       })
-      .then((res) => {
-        setWeather(res.data);
-        setError("");
-      })
-      .catch(() => {
-        setError("City not found.");
-        setWeather(null);
-      });
+      .then((res) => setWeather(res.data))
+      .catch((err) => console.log(err));
   }, [city]);
 
-  if (error) return <p className="error">{error}</p>;
-  if (!weather) return <p className="loading">Loading current weather...</p>;
+  if (!weather) return <p>Loading...</p>;
 
   return (
     <div className="card current-weather">
       <h2>{weather.name}</h2>
-      <p className="temp">{Math.round(weather.main.temp)}°C</p>
 
+      {/* ICON */}
+      <img
+        src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+        alt="Weather Icon"
+        className="forecast-icon"
+      />
+
+      {/* TEMPERATURE */}
+      <p className="temp-large">{Math.round(weather.main.temp)}°C</p>
+
+      {/* DESCRIPTION */}
+      <p style={{ color: "#333", textTransform: "capitalize" }}>
+        {weather.weather[0].description}
+      </p>
+
+      {/* DETAILS */}
       <div className="details">
         <div>
-          <WiHumidity size={30} /> {weather.main.humidity}% Humidity
+          <WiHumidity size={32} /> {weather.main.humidity}% Humidity
         </div>
         <div>
-          <WiStrongWind size={30} /> {weather.wind.speed} m/s Wind
+          <WiStrongWind size={32} /> {weather.wind.speed} m/s Wind
         </div>
       </div>
     </div>
