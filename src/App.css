@@ -9,10 +9,9 @@ body {
 
 /* App container */
 .app-container {
-  max-width: 750px;
-  margin: 0 auto;
-  padding: 30px;
-  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;        
+  padding: 20px;
 }
 
 /* Title */
