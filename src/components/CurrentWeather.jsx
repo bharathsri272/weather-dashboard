@@ -4,21 +4,26 @@ import { WiHumidity, WiStrongWind } from "react-icons/wi";
 
 const API_KEY = import.meta.env.VITE_OPENWEATHER_KEY;
 
-export default function CurrentWeather({ city }) {
+export default function CurrentWeather({ location, unit, addCity }) {
   const [weather, setWeather] = useState(null);
+
+  // Nothing selected yet
+  if (!location) return <p>Search for a city...</p>;
+  if (!location.lat || !location.lon) return null;
 
   useEffect(() => {
     axios
       .get("https://api.openweathermap.org/data/2.5/weather", {
         params: {
-          q: city,
+          lat: location.lat,
+          lon: location.lon,
+          units: unit,
           appid: API_KEY,
-          units: "metric",
         },
       })
       .then((res) => setWeather(res.data))
       .catch((err) => console.log(err));
-  }, [city]);
+  }, [location, unit]);
 
   if (!weather) return <p>Loading...</p>;
 
@@ -26,22 +31,11 @@ export default function CurrentWeather({ city }) {
     <div className="card current-weather">
       <h2>{weather.name}</h2>
 
-      {/* ICON */}
-      <img
-        src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
-        alt="Weather Icon"
-        className="forecast-icon"
-      />
-
-      {/* TEMPERATURE */}
-      <p className="temp-large">{Math.round(weather.main.temp)}°C</p>
-
-      {/* DESCRIPTION */}
-      <p style={{ color: "#333", textTransform: "capitalize" }}>
-        {weather.weather[0].description}
+      <p className="temp-large">
+        {Math.round(weather.main.temp)}°
+        {unit === "metric" ? "C" : "F"}
       </p>
 
-      {/* DETAILS */}
       <div className="details">
         <div>
           <WiHumidity size={32} /> {weather.main.humidity}% Humidity
@@ -50,6 +44,20 @@ export default function CurrentWeather({ city }) {
           <WiStrongWind size={32} /> {weather.wind.speed} m/s Wind
         </div>
       </div>
+
+      {/* Save city button */}
+      <button
+        className="save-button"
+        onClick={() =>
+          addCity({
+            city: weather.name,
+            lat: location.lat,
+            lon: location.lon,
+          })
+        }
+      >
+        ⭐ Save City
+      </button>
     </div>
   );
 }

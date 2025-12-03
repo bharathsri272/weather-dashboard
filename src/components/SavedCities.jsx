@@ -1,53 +1,49 @@
-import { useEffect, useState } from "react";
-import { FaStar, FaTrash } from "react-icons/fa";
+import { AiFillStar } from "react-icons/ai";
+import { FaTrash } from "react-icons/fa";
 
-export default function SavedCities({ selectedCity }) {
-  const [saved, setSaved] = useState([]);
-
-  // Load saved cities from localStorage on load
-  useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("savedCities")) || [];
-    setSaved(stored);
-  }, []);
-
-  // Save city when it changes
-  useEffect(() => {
-    if (!selectedCity) return;
-
-    setSaved((prev) => {
-      if (prev.includes(selectedCity)) return prev; // avoid duplicates
-
-      const updated = [...prev, selectedCity];
-      localStorage.setItem("savedCities", JSON.stringify(updated));
-      return updated;
+export default function SavedCities({
+  savedCities,
+  setSavedCities,
+  setLocation,
+}) {
+  const loadCity = (cityObj) => {
+    setLocation({
+      city: cityObj.city,
+      lat: cityObj.lat,
+      lon: cityObj.lon,
     });
-  }, [selectedCity]);
-
-  // Remove city
-  const removeCity = (city) => {
-    const filtered = saved.filter((c) => c !== city);
-    setSaved(filtered);
-    localStorage.setItem("savedCities", JSON.stringify(filtered));
   };
 
-  if (saved.length === 0) return null;
+  const deleteCity = (cityObj) => {
+    setSavedCities(
+      savedCities.filter(
+        (c) => c.lat !== cityObj.lat || c.lon !== cityObj.lon
+      )
+    );
+  };
 
   return (
     <div className="saved-container">
-      <h2>⭐ Saved Cities</h2>
+      <h2 className="saved-title">⭐ Saved Cities</h2>
 
-      <ul className="saved-list">
-        {saved.map((city, idx) => (
-          <li key={idx} className="saved-item">
-            <FaStar color="gold" />
-            <span>{city}</span>
-            <FaTrash
-              className="trash-icon"
-              onClick={() => removeCity(city)}
-            />
-          </li>
-        ))}
-      </ul>
+      {savedCities.length === 0 && <p>No saved cities yet.</p>}
+
+      {savedCities.map((c, index) => (
+        <div key={index} className="saved-item">
+          <AiFillStar size={22} color="gold" />
+
+          <span className="saved-text" onClick={() => loadCity(c)}>
+            {c.city}
+          </span>
+
+          <FaTrash
+            size={18}
+            color="red"
+            className="trash-icon"
+            onClick={() => deleteCity(c)}
+          />
+        </div>
+      ))}
     </div>
   );
 }

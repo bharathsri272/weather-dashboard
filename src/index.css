@@ -1,10 +1,17 @@
-/* Keep Vite defaults clean — NO forced colors */
-:root {
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
-}
-
 body {
   margin: 0;
   padding: 0;
-  background: #e0ecff; /* just a light neutral bg */
+  font-family: system-ui, sans-serif;
+  background: #f0f4ff;
 }
+
+:root {
+  color: #1a1a1a;
+  background-color: #ffffff;
+}
+
+#root {
+  width: 100%;
+}
+
+

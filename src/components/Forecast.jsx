@@ -3,26 +3,28 @@ import axios from "axios";
 
 const API_KEY = import.meta.env.VITE_OPENWEATHER_KEY;
 
-export default function Forecast({ city }) {
+export default function Forecast({ location, unit }) {
   const [forecast, setForecast] = useState(null);
+
+  if (!location) return null;
+  if (!location.lat || !location.lon) return null;
 
   useEffect(() => {
     axios
       .get("https://api.openweathermap.org/data/2.5/forecast", {
         params: {
-          q: city,
+          lat: location.lat,
+          lon: location.lon,
+          units: unit,
           appid: API_KEY,
-          units: "metric",
         },
       })
       .then((res) => {
-        // OpenWeather gives 40 entries (3-hour increments)
-        // Reduce to one per day (every 8 items)
         const daily = res.data.list.filter((_, index) => index % 8 === 0);
         setForecast(daily);
       })
       .catch((err) => console.log(err));
-  }, [city]);
+  }, [location, unit]);
 
   if (!forecast) return <p>Loading forecast...</p>;
 
@@ -31,7 +33,6 @@ export default function Forecast({ city }) {
       <h2 className="forecast-title">5-Day Forecast</h2>
 
       <div className="forecast-grid">
-
         {forecast.map((day, index) => (
           <div key={index} className="forecast-card">
             <p>
@@ -42,23 +43,21 @@ export default function Forecast({ city }) {
               })}
             </p>
 
-            {/* Weather Icon */}
             <img
               src={`https://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`}
-              alt="weather icon"
               className="forecast-icon"
             />
 
-            {/* Temperature */}
-            <p className="temp">{Math.round(day.main.temp)}°C</p>
+            <p className="temp">
+              {Math.round(day.main.temp)}°
+              {unit === "metric" ? "C" : "F"}
+            </p>
 
-            {/* Description */}
             <p style={{ textTransform: "capitalize" }}>
               {day.weather[0].description}
             </p>
           </div>
         ))}
-
       </div>
     </>
   );
