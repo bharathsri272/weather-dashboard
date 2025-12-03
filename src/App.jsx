@@ -5,28 +5,22 @@ import Forecast from "./components/Forecast";
 import SavedCities from "./components/SavedCities";
 import "./App.css";
 
-export default function App() {
-  const [selectedCity, setSelectedCity] = useState("");
-
-  const handleSearch = (city) => {
-    setSelectedCity(city);
-  };
+function App() {
+  const [city, setCity] = useState("New York");
 
   return (
     <div className="app-container">
-      <h1 className="title">🌤️ Weather Dashboard</h1>
+      <h1>🌤️ Weather Dashboard</h1>
 
-      <SearchBar onSearch={handleSearch} />
+      <SearchBar setCity={setCity} />
 
-      {selectedCity ? (
-        <>
-          <CurrentWeather city={selectedCity} />
-          <Forecast city={selectedCity} />
-          <SavedCities selectedCity={selectedCity} />
-        </>
-      ) : (
-        <p className="placeholder">Search for a city to begin.</p>
-      )}
+      <CurrentWeather city={city} />
+
+      <Forecast city={city} />
+
+      <SavedCities setCity={setCity} />
     </div>
   );
 }
+
+export default App;
