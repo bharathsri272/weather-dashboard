@@ -5,7 +5,22 @@ Built with **React + Vite**, **OpenWeather API**, and **React Icons**.
 ---
 
 ## 🚀 Live Demo
-_Add your Vercel link here once deployed_
+
+The project is deployed on Vercel — try it here:
+
+👉 https://weather-dashboard-kappa-eight.vercel.app
+
+This live version includes:
+
+🔍 Autocomplete city search (city, state, country)
+
+🌡️ Temperature unit toggle (°C / °F)
+
+📍 Accurate coordinates-based weather lookups
+
+⭐ Saved cities (persistent across sessions)
+
+📅 5-day forecast
 
 ---
 
